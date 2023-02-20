@@ -1,4 +1,4 @@
-import { render } from "@testing-library/react";
+import {fireEvent ,screen, render} from "@testing-library/react";
 
 import { ListItem } from "../ListItem";
 
@@ -46,9 +46,30 @@ describe('ListItem', () => {
         expect(node.children).toHaveLength(1);
     });
     
-    it('callback is called', () => {});
+    it('callback is called', () => {
+        const item='Lorem ipsum dolor sit amet consectetur'
+        const { getByTestId } = render(
+            <ListItem
+                id='1'
+                checkable={true}
+                onCheck={mockOnCheck}
+                item={item}
+            />
+        );
+        const input = getByTestId("test-1");
+        fireEvent.click(input);
+        expect(mockOnCheck).toHaveBeenCalledTimes(1);
+    });
 
-    it('callback is not called when not checkable', () => {});
+    it('callback is not called when not checkable', () => {
+        const mockCallback = jest.fn();
+        render(<ListItem checkable={false} onCheck={mockCallback} id="test-1" item="test item" />);
+        const checkbox = screen.queryByTestId('test-test-1');
+        if (checkbox) {
+            fireEvent.click(checkbox);
+        }
+        expect(mockCallback).not.toHaveBeenCalled();
+    });
 
     it('matches saved snapshot', () => {
         const tree = render(
